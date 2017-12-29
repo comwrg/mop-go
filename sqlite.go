@@ -19,6 +19,7 @@ func (s * Sqlite) Init() (err error) {
 	if err != nil {
 		return
 	}
+	s.db.SetMaxOpenConns(1)
 	sqlStmt := `
 	CREATE TABLE IF NOT EXISTS %s (
 		/* user information */
