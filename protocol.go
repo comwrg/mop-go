@@ -144,7 +144,7 @@ func (m*Protocol) Init(vc string) error {
 		},
 	}
 
-	url := "http://112.5.185.82:8881/MBossWeb/mbop/index_hidden.jsp?vc={vc}&remurl=http%3A%2F%2F112.5.185.82%3A8881%2FMBossWeb&localpre=file%3A%2Fdata%2Fdata%2Fcom.newland.mbop%2Ffiles%2Fwebcache%2F&ptid=&hc=592&sm=1&sw=480&sh=800&enc=utf-8&fastmode=0&fc=89100123&url=%5Bhttp%5Dpage-fj%2Fcrm%2F4Assamble%2F4_assamble.jsp&theme=&randCode=1A2B3C4D5E6F7G8H&isVirtualXML=false&menuName=%E6%99%BA%E8%83%BD%E8%90%A5%E9%94%80&portal_id=101704&op_home_country=201&opType=0&exturl=mode%3D0%26cancel_query%3Dfalse"
+	url := "http://112.5.185.82:8881/MBossWeb/mbop/index_hidden.jsp?vc={vc}&ptid=770489400020&opType=0"
 	url = strings.Replace(url, "{vc}", vc, 1)
 	_, err := m.client.Get(url)
 	return err
