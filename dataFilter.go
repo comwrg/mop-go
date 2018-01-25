@@ -85,6 +85,11 @@ func FilterConsumeInfo(info * JSONconsumeInfo) (ci ConsumeInfo, err error) {
 
 func FilterUserBaseInfo(info * JSONuserBaseInfo) (ubi UserBaseInfo, err error) {
 	ubi.recommendInfo = ""
+	// handle recommend info
+	for _, v := range info.IndivRecommendInfoList {
+		ubi.recommendInfo += v.SaleName + "\n";
+	}
+
 	ubi.terminalType = info.UserBaseInfo.TerminalType
 	ubi.isBoundTerminal = info.UserBaseInfo.IsBoundTerminal
 	ubi.terminalChangeTime = info.UserBaseInfo.TerminalChangeTime
