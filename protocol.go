@@ -63,6 +63,26 @@ type JSONconsumeInfo struct {
 }
 type JSONuserBaseInfo struct {
 	BillFlag     bool `json:"bill_flag"`
+	IndivRecommendInfoList []struct {
+		LastRecomAction      string `json:"last_recom_action"`
+		SaleName             string `json:"sale_name"`
+		IntroduceInfo        string `json:"introduce_info"`
+		LastRecomChannel     string `json:"last_recom_channel"`
+		InureTime            string `json:"inure_time"`
+		RecomTotalCnt        string `json:"recom_total_cnt"`
+		ExpireTime           string `json:"expire_time"`
+		RewardRegNo          string `json:"reward_reg_no"`
+		RecommendInfo        string `json:"recommend_info"`
+		RewardAmount         string `json:"reward_amount"`
+		RecommendSubType     string `json:"recommend_sub_type"`
+		LastRecomTime        string `json:"last_recom_time"`
+		LastRecomChannelName string `json:"last_recom_channel_name"`
+		ExistRecomInfo       string `json:"exist_recom_info"`
+		AcceptType           string `json:"accept_type"`
+		RecomSuccCnt         string `json:"recom_succ_cnt"`
+		RecommendType        string `json:"recommend_type"`
+		SaleID               string `json:"sale_id"`
+	} `json:"indiv_recommend_info_list"`
 	UserBaseInfo struct {
 		IsBoundTerminal        string `json:"is_bound_terminal"`
 		Is4GBaseProduct        string `json:"is_4g_base_product"`
