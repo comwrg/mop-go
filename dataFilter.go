@@ -89,6 +89,13 @@ func FilterUserBaseInfo(info * JSONuserBaseInfo) (ubi UserBaseInfo, err error) {
 	for _, v := range info.IndivRecommendInfoList {
 		ubi.recommendInfo += v.SaleName + "\n";
 	}
+	for _, v0 := range info.UnifyRecommendInfoList {
+		ubi.recommendInfo += v0.SaleName + " ";
+		for _, v1 := range v0.BusiInfo {
+			ubi.recommendInfo += v1.BusinessName + " ";
+		}
+		ubi.recommendInfo += "\n";
+	}
 
 	ubi.terminalType = info.UserBaseInfo.TerminalType
 	ubi.isBoundTerminal = info.UserBaseInfo.IsBoundTerminal

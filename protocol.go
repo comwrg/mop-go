@@ -83,6 +83,36 @@ type JSONuserBaseInfo struct {
 		RecommendType        string `json:"recommend_type"`
 		SaleID               string `json:"sale_id"`
 	} `json:"indiv_recommend_info_list"`
+	UnifyRecommendInfoList []struct {
+		LastRecomAction      string        `json:"last_recom_action"`
+		SaleName             string        `json:"sale_name"`
+		LastRecomChannel     string        `json:"last_recom_channel"`
+		RecommendBusi        string        `json:"recommend_busi"`
+		GradeName            string        `json:"grade_name"`
+		GradeEndDate         string        `json:"grade_end_date"`
+		ProgID               string        `json:"prog_id"`
+		BusiInfo []struct {
+			BusinessName string `json:"business_name"`
+			BusinessID   string `json:"business_id"`
+			BusinessType string `json:"business_type"`
+		} `json:"busi_info"`
+		ProgName             string        `json:"prog_name"`
+		RecommendInfo        string        `json:"recommend_info"`
+		BusinessName         string        `json:"business_name"`
+		GradeStartDate       string        `json:"grade_start_date"`
+		BusiExt2             string        `json:"busi_ext2"`
+		BusiExt1             string        `json:"busi_ext1"`
+		LastRecomTime        string        `json:"last_recom_time"`
+		LastRecomChannelName string        `json:"last_recom_channel_name"`
+		Priority             string        `json:"priority"`
+		ExistRecomInfo       string        `json:"exist_recom_info"`
+		BusinessID           string        `json:"business_id"`
+		RecommendType        string        `json:"recommend_type"`
+		GradeID              string        `json:"grade_id"`
+		BusinessType         string        `json:"business_type"`
+		BusiExt3             string        `json:"busi_ext3"`
+		SaleID               string        `json:"sale_id"`
+	} `json:"unify_recommend_info_list"`
 	UserBaseInfo struct {
 		IsBoundTerminal        string `json:"is_bound_terminal"`
 		Is4GBaseProduct        string `json:"is_4g_base_product"`
