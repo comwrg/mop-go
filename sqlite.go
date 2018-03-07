@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
+	_"github.com/mattn/go-sqlite3"
 )
 
 const (
