@@ -8,9 +8,10 @@ import (
 	"golang.org/x/text/transform"
 	"io/ioutil"
 	"log"
+	"strings"
 	"net/http"
 	"net/http/cookiejar"
-	"strings"
+	"errors"
 )
 
 type JSONuserInfo struct {
@@ -182,7 +183,12 @@ func GbkToUtf8(s []byte) ([]byte, error) {
 	return d, nil
 }
 
-func (m*Protocol) Init(vc string) error {
+func setDefaultHeader(req *http.Request) {
+	req.Header.Set("client_mac", "00:00:00:00:00:00")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+}
+
+func (m*Protocol) Init(vc string) (err error) {
 	cookieJar, _ := cookiejar.New(nil)
 	m.client = http.Client{
 		Jar:       cookieJar,
@@ -192,12 +198,21 @@ func (m*Protocol) Init(vc string) error {
 			DisableKeepAlives:  true,
 			//Proxy:              nil,
 		},
-	}
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
 
+	}
 	url := "http://112.5.185.82:8881/MBossWeb/mbop/index_hidden.jsp?vc={vc}&ptid=770489400020&opType=0"
 	url = strings.Replace(url, "{vc}", vc, 1)
-	_, err := m.client.Get(url)
-	return err
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	setDefaultHeader(req)
+	resp, err := m.client.Do(req)
+	cookie := resp.Header.Get("Set-Cookie")
+	if strings.Index(cookie, "JSESSIONID") < 0 {
+		return errors.New("init failed")
+	}
+	return
 }
 
 func (m*Protocol) Query(mobile string, inter interface{}) (err error) {
@@ -217,7 +232,9 @@ func (m*Protocol) Query(mobile string, inter interface{}) (err error) {
 
 	url := "http://112.5.185.82:8881/MBossWeb/bmaccept/4assambleQueryMgr.do?method=" + method
 	body := "msisdn=" + mobile
-	resp, err := m.client.Post(url, "application/x-www-form-urlencoded", strings.NewReader(body))
+	req, err := http.NewRequest(http.MethodPost, url, strings.NewReader(body))
+	setDefaultHeader(req)
+	resp, err := m.client.Do(req)
 	if err != nil {
 		return
 	}
