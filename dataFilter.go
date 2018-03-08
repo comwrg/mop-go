@@ -99,7 +99,7 @@ func FilterConsumeInfo(info * JSONconsumeInfo) (ci ConsumeInfo, err error) {
 			}
 		}
 	}
-	ci.consumption = ci.flowConsume[time.Now().Month()]
+	ci.consumption = ci.callsConsume[time.Now().Month()]
 	return
 }
 
