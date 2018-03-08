@@ -3,6 +3,7 @@ package mop
 import (
 	"regexp"
 	"strconv"
+	"time"
 )
 
 type UserInfo struct {
@@ -10,6 +11,10 @@ type UserInfo struct {
 }
 
 type ConsumeInfo struct {
+	balance  	string
+	arrears 	string
+	consumption string
+
 	// not use 0th value
 	callsConsume [13]string
 	flowConsume  [13]string
@@ -62,6 +67,14 @@ func FilterConsumeInfo(info * JSONconsumeInfo) (ci ConsumeInfo, err error) {
 	if err != nil {
 		return
 	}
+	reBalance, err := regexp.Compile(`^当前余额/(.*)$`)
+	if err != nil {
+		return
+	}
+	reArrears, err := regexp.Compile(`^总欠费金额/(.*)$`)
+	if err != nil {
+		return
+	}
 	// 12 月消费/112.49
 	// 201709/已使用优惠额度(全时段包+闲时包)/740.69 + 0.00MB
 	for _, v1 := range info.ConsumeList.Firstlevel {
@@ -77,9 +90,16 @@ func FilterConsumeInfo(info * JSONconsumeInfo) (ci ConsumeInfo, err error) {
 				month, _ := strconv.Atoi(string(re[1]))
 				flow := string(re[2])
 				ci.flowConsume[month] = flow
+			} else if re := reBalance.FindSubmatch(b); len(re) > 0 {
+				money := string(re[1])
+				ci.balance = money
+			} else if re := reArrears.FindSubmatch(b); len(re) > 0 {
+				money := string(re[1])
+				ci.arrears = money
 			}
 		}
 	}
+	ci.consumption = ci.flowConsume[time.Now().Month()]
 	return
 }
 

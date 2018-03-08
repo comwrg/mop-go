@@ -38,6 +38,10 @@ func (s * Sqlite) Init() (err error) {
 		业务信息 TEXT DEFAULT '',
 
 		/* consume information */
+		当前余额 DOUBLE DEFAULT 0,
+		总欠费金额 DOUBLE DEFAULT 0,
+		消费明细 DOUBLE DEFAULT 0,
+
 		一月消费 DOUBLE DEFAULT 0,
 		二月消费 DOUBLE DEFAULT 0,
 		三月消费 DOUBLE DEFAULT 0,
@@ -138,6 +142,10 @@ func (s * Sqlite) UpdateBusinessInfo(mobile, info string) (err error) {
 func (s * Sqlite) UpdateConsumeInfo(mobile string, info ConsumeInfo) (err error) {
 	sqlSmst := `
 	UPDATE %s SET
+		当前余额 = (?),
+		总欠费金额 = (?),
+		消费明细 = (?),
+
 		一月消费 = (?),
 		二月消费 = (?),
 		三月消费 = (?),
@@ -166,6 +174,10 @@ func (s * Sqlite) UpdateConsumeInfo(mobile string, info ConsumeInfo) (err error)
 	`
 	_, err = s.db.Exec(
 		fmt.Sprintf(sqlSmst, TABLE),
+
+		info.balance,
+		info.arrears,
+		info.consumption,
 
 		info.callsConsume[1],
 		info.callsConsume[2],
