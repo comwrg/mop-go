@@ -3,8 +3,7 @@ package mop
 import (
 	"database/sql"
 	"fmt"
-	"strings"
-	_"github.com/mattn/go-sqlite3"
+	"github.com/mattn/go-sqlite3"
 )
 
 const (
@@ -15,12 +14,50 @@ type Sqlite struct {
 	db * sql.DB
 }
 
+func contains(arr []sqlite3.ErrNo, item sqlite3.ErrNo) bool {
+	for _, v := range arr {
+		if v == item {
+			return true
+		}
+	}
+	return false
+}
+
+// retry error database is locked
+func (s *Sqlite) execWhileSuccess(query string, args ...interface{}) (r sql.Result, err error) {
+	retryErr := []sqlite3.ErrNo {
+		sqlite3.ErrCantOpen,
+		sqlite3.ErrLocked,
+		sqlite3.ErrBusy,
+	}
+	ignoreErr := []sqlite3.ErrNo {
+		sqlite3.ErrConstraint,
+	}
+
+	for {
+		r, err = s.db.Exec(query, args...)
+
+		if err != nil {
+			errCode := err.(sqlite3.Error).Code
+			if contains(retryErr, errCode) {
+				continue
+			}
+
+			if contains(ignoreErr, errCode) {
+				err = nil
+				return
+			}
+		}
+		return
+	}
+}
+
 func (s * Sqlite) Init() (err error) {
 	s.db, err = sql.Open("sqlite3", "./data.db")
 	if err != nil {
 		return
 	}
-	s.db.SetMaxOpenConns(1)
+	//s.db.SetMaxOpenConns(1)
 	sqlStmt := `
 	CREATE TABLE IF NOT EXISTS %s (
 		/* user information */
@@ -83,7 +120,7 @@ func (s * Sqlite) Init() (err error) {
 		卡槽类型 TEXT DEFAULT ''
 	)
 	`
-	_, err = s.db.Exec(
+	_, err = s.execWhileSuccess(
 		fmt.Sprintf(sqlStmt, TABLE, ),
 		)
 	return
@@ -91,16 +128,10 @@ func (s * Sqlite) Init() (err error) {
 
 func (s * Sqlite) Insert(mobile string) (err error) {
 	sqlStmt := `INSERT INTO %s (手机号) VALUES(?)`
-	_, err = s.db.Exec(
+	_, err = s.execWhileSuccess(
 		fmt.Sprintf(sqlStmt, TABLE),
 		mobile,
 	)
-	// ignore
-	if err != nil {
-		if strings.Contains(err.Error(), "UNIQUE constraint failed") {
-			err = nil
-		}
-	}
 	return
 }
 
@@ -117,7 +148,7 @@ func (s * Sqlite) UpdateUserInfo(mobile string, ui UserInfo) (err error) {
 		最晚捆绑时间 = (?)
 		WHERE 手机号 = (?)
 	`
-	_, err = s.db.Exec(
+	_, err = s.execWhileSuccess(
 		fmt.Sprintf(sqlStmt, TABLE),
 		ui.name, ui.attribution, ui.startTime, ui.basePackage,
 		ui.userStatus, ui.billingType, ui.groupName, ui.bundlingTime, mobile,
@@ -131,7 +162,7 @@ func (s * Sqlite) UpdateBusinessInfo(mobile, info string) (err error) {
 		业务信息 = (?)
 		WHERE 手机号 = (?)
 	`
-	_, err = s.db.Exec(
+	_, err = s.execWhileSuccess(
 		fmt.Sprintf(sqlStmt, TABLE),
 		info,
 		mobile,
@@ -172,7 +203,7 @@ func (s * Sqlite) UpdateConsumeInfo(mobile string, info ConsumeInfo) (err error)
 		十二月流量 = (?)
 		WHERE 手机号 = (?)
 	`
-	_, err = s.db.Exec(
+	_, err = s.execWhileSuccess(
 		fmt.Sprintf(sqlSmst, TABLE),
 
 		info.balance,
@@ -228,7 +259,7 @@ func (s * Sqlite) UpdateUserBaseInfo(mobile string, ubi UserBaseInfo) (err error
 		卡槽类型 = (?)
 		WHERE 手机号 = (?)
 	`
-	_, err = s.db.Exec(
+	_, err = s.execWhileSuccess(
 		fmt.Sprintf(sqlSmst, TABLE),
 		ubi.recommendInfo, ubi.terminalType, ubi.isBoundTerminal,
 		ubi.terminalChangeTime, ubi.isBroadBand, ubi.isRealNameUser, ubi.isSphoneUser,
