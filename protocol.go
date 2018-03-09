@@ -193,10 +193,12 @@ func (m*Protocol) Init(vc string) (err error) {
 	m.client = http.Client{
 		Jar:       cookieJar,
 		Transport: &http.Transport{
-			MaxIdleConns:       0,
-			DisableCompression: true,
-			DisableKeepAlives:  true,
-			//Proxy:              nil,
+			MaxIdleConns:        0,
+			MaxIdleConnsPerHost: 1<<32 - 1,
+			IdleConnTimeout:     0,
+			DisableCompression:  false,
+			DisableKeepAlives:   false,
+			Proxy:               nil,
 		},
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
