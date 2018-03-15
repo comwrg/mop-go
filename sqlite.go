@@ -68,6 +68,7 @@ func (s * Sqlite) Init() (err error) {
 		基本套餐 TEXT DEFAULT '',
 		用户状态 TEXT DEFAULT '',
 		出账类型 TEXT DEFAULT '',
+		客户类型 TEXT DEFAULT '',
 		集团名称 TEXT DEFAULT '',
 		最晚捆绑时间 TEXT DEFAULT '',
 
@@ -144,6 +145,7 @@ func (s * Sqlite) UpdateUserInfo(mobile string, ui UserInfo) (err error) {
 		基本套餐 = (?),
 		用户状态 = (?),
 		出账类型 = (?),
+		客户类型 = (?),
 		集团名称 = (?),
 		最晚捆绑时间 = (?)
 		WHERE 手机号 = (?)
@@ -151,7 +153,7 @@ func (s * Sqlite) UpdateUserInfo(mobile string, ui UserInfo) (err error) {
 	_, err = s.execWhileSuccess(
 		fmt.Sprintf(sqlStmt, TABLE),
 		ui.name, ui.attribution, ui.startTime, ui.basePackage,
-		ui.userStatus, ui.billingType, ui.groupName, ui.bundlingTime, mobile,
+		ui.userStatus, ui.billingType, ui.userType, ui.groupName, ui.bundlingTime, mobile,
 	)
 	return
 }

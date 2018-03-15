@@ -7,7 +7,7 @@ import (
 )
 
 type UserInfo struct {
-	name, attribution, startTime, basePackage, userStatus, billingType, groupName, bundlingTime string
+	name, attribution, startTime, basePackage, userStatus, billingType, userType, groupName, bundlingTime string
 }
 
 type ConsumeInfo struct {
@@ -42,6 +42,7 @@ func FilterUserInfo(info * JSONuserInfo) (ui UserInfo) {
 	ui.basePackage  = info.UserBaseInfo.Basicinfo[5].Context
 	ui.userStatus   = info.UserBaseInfo.Basicinfo[6].Context
 	ui.billingType  = info.UserBaseInfo.Basicinfo[7].Context
+	ui.userType     = info.UserBaseInfo.Basicinfo[10].Context
 	ui.groupName    = info.UserBaseInfo.Basicinfo[11].Context
 	ui.bundlingTime = info.UserBaseInfo.Basicinfo[14].Context
 	return
